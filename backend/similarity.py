@@ -1,21 +1,21 @@
 import pandas as pd
-from scipy import spatial
-# from modules.intent_classifier import get_predicted_topic
+from scipy import spatialc
 import numpy as np
 import tensorflow_hub as hub
 import json
+from sklearn.preprocessing import OneHotEncoder
+import tensorflow as tf
 
 # Converting CSV to Pandas dataframe and extracting list of questions
 data = pd.read_csv('backend/resources/all_courses.csv')
 needed = data[["course_id", "dept_id", "name", "department", "credits", "description"]]
 
-needed['Combined'] = needed[needed.columns[1:]].apply(
+needed['Combined'] = needed[needed.columns[0:]].apply(
     lambda x: ','.join(x.dropna().astype(str)),
     axis=1
 )
 
-text = data['Combined'].tolist()
-classes = data["course_id"].tolist()
+text = needed['Combined'].tolist()
 
 model_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
 model = hub.load(model_url)
@@ -23,36 +23,39 @@ model = hub.load(model_url)
 text_vec_list = []
 text_vec_USE = np.array(model(text))
 
-courses_vec_list = []
-courses_vec_USE = np.array(model(classes))
 
+data['text_vec'] = text_vec_USE.tolist()
 
-data['Question_vec'] = questions_vec_USE.tolist()
-data['Answer_vec'] = answer_vec_USE.tolist()
-
-def aggregate_similarity(query: str):
+def aggregate_similarity(request: str):
     # Setting up lists for similarity scores for SentBERT and USE algorithms
     probs_USE = []
 
-    # Using an intent classifier to filter out questions
-    if conf.USE_TOPIC_CLASSIFICATION:
-        predicted_topic = get_predicted_topic(query)
-        narrowed_questions = data.loc[data[conf.TOPIC_COL_NAME] == predicted_topic]
-    else:
-        narrowed_questions = data
+    #Using an intent classifier to filter out courses
 
-    # Vectorizing query uing respective models
-    query_vec_USE = np.array(conf.SENTENCE_EMBEDDING_MODEL([query]))[0]
+    one_hot_encoder = OneHotEncoder()
+    departments = data[['dept_id']]
+    topic_labels = one_hot_encoder.fit_transform(departments).toarray()
 
-    np_question_vec = np.array(narrowed_questions['Question_vec'])
-    np_answer_vec = np.array(narrowed_questions['Answer_vec'])
+    # Loading model from file
+    trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_model.keras', 
+                                               custom_objects={'KerasLayer':hub.KerasLayer}, 
+                                               )
+
+    # Applying model to the query
+    pred = trained_model.predict(model([request]))
+    chosen_department = one_hot_encoder.inverse_transform(pred)[0][0]    
+
+    narrowed_questions = data.loc[data['dept_id'] == chosen_department]
+
+    # Vectorizing query using respective models
+    request_vec_USE = np.array(model([request]))[0]
+
+    np_text_vec = np.array(narrowed_questions['text_vec'])
     
     # Finding cosine similarity between Sample_Faq and query
-    for vec in range(len(np_question_vec)):
-        sim_q_USE = 1 - spatial.distance.cosine(query_vec_USE, np_question_vec[vec])
-        sim_a_USE = 1 - spatial.distance.cosine(query_vec_USE, np_answer_vec[vec])
-        weighted = (1 * sim_q_USE) + (0.0 * sim_a_USE)
-        probs_USE.append(weighted)
+    for vec in range(len(np_text_vec)):
+        sim_q_USE = 1 - spatial.distance.cosine(request_vec_USE, np_text_vec[vec])
+        probs_USE.append(sim_q_USE)
 
 
     #Adding similarity scores to overall dataframe for each question    
@@ -62,10 +65,15 @@ def aggregate_similarity(query: str):
     sorted_USE = narrowed_questions.sort_values(by = ['Probabilities_USE'], ascending = False)
 
     # Extracting the predicted question and answer based on highest similarity score
-    possible_qa_USE = sorted_USE.iloc[0]
 
+    output = "{"
+    for i in range(len(sorted_USE)):
+        possible_class_USE = sorted_USE.iloc[i]
+        output += str(i) + ": " + str({'Course ID': possible_class_USE.course_id, "Probability": possible_class_USE.Probabilities_USE}) + ", "
 
-    output = {'id': int(possible_qa_USE.faq_id), 'Topic': possible_qa_USE.topic, 'Question': possible_qa_USE.question, "Answer": possible_qa_USE.answer, "Probability": possible_qa_USE.Probabilities_USE}
+    output += "}"
 
     return json.dumps(output)
 
+
+aggregate_similarity("CMSC422")

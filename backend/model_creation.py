@@ -79,7 +79,7 @@ history = model.fit(training_text,
 # Saving model to file
 model.save('backend/resources/intent_classifier_model')
 
-pred = model.predict(["recommend a course about fire safety", "CMSC", "Give a one credit course on coding interviews"])
+pred = model.predict(["recommend a course about fire safety", "CMSC", "Give a one credit course on coding interviews", "course on Artificial Intelligence"])
 # print(pred)
 
 department_num = data[["dept_id"]].drop_duplicates()
