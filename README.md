@@ -12,7 +12,7 @@ This project solves the issue of students at UMD who do not know what classes to
 For instance, these are some prompts that a student might enter into our application:
 * Recommend me a course about artificial inteligence
 * Recommend me a course that is 1 credit in CMSC
-* Recommend me a course that is a DVUP gened in BMGT that teachs ethics
+* Recommend me a course that is a DVUP gened in BMGT that teaches ethics
 
 Here is the user flow:
 * Enter major(s)

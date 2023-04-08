@@ -31,16 +31,15 @@ training_text = training_data["Combined"].to_numpy()
 one_hot_encoder = OneHotEncoder()
 fitted = one_hot_encoder.fit(data[["dept_id"]])
 training_dept_id_labels = fitted.transform(training_departments).toarray()
-# testing_dept_id_labels = fitted.transform(testing_department).toarray()
 
 # Vectorizing text setup
 model_text = "https://tfhub.dev/google/universal-sentence-encoder/4"
-hub_layer = hub.KerasLayer(model_text, input_shape=[], dtype=tf.string, trainable=True)
+model_vec = hub.load(model_text)
+training_text_vec = model_vec(training_text)
 
 # # Building model to train intent classifier
 model = tf.keras.Sequential()
-
-model.add(hub_layer)
+# model.add(hub_layer)
 # model.add(tf.keras.layers.Normalization())
 model.add(tf.keras.layers.Dense(500)),
 model.add(tf.keras.layers.Dropout(0.5))
@@ -48,7 +47,7 @@ model.add(tf.keras.layers.Dense(216)),
 model.add(tf.keras.layers.Dropout(0.2))
 model.add(tf.keras.layers.Dense(department_num, activation="softmax"))
 
-print(model.summary())
+# print(model.summary())
 
 # Optimizing model
 model.compile(
@@ -65,7 +64,7 @@ reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
 
 
 # Fitting model to input and output data and optimizing on validation data
-history = model.fit(training_text, 
+history = model.fit(training_text_vec, 
                     training_dept_id_labels, 
                     # validation_data = (x_val, y_val),
                     epochs = 15,
@@ -79,7 +78,8 @@ history = model.fit(training_text,
 # Saving model to file
 model.save('backend/resources/intent_classifier_model')
 
-pred = model.predict(["recommend a course about fire safety", "CMSC", "Give a one credit course on coding interviews", "course on Artificial Intelligence"])
+test_vec = model_vec(["recommend a course about fire safety", "CMSC", "Give a one credit course on coding interviews", "course on Artificial Intelligence"])
+pred = model.predict(test_vec)
 # print(pred)
 
 department_num = data[["dept_id"]].drop_duplicates()

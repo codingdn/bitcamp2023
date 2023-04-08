@@ -1,5 +1,5 @@
 import pandas as pd
-from scipy import spatialc
+from scipy import spatial
 import numpy as np
 import tensorflow_hub as hub
 import json
@@ -23,29 +23,34 @@ model = hub.load(model_url)
 text_vec_list = []
 text_vec_USE = np.array(model(text))
 
+one_hot_encoder = OneHotEncoder()
+departments = data[['dept_id']]
+one_hot_encoder.fit_transform(departments).toarray()
+trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_model')
 
 data['text_vec'] = text_vec_USE.tolist()
 
 def aggregate_similarity(request: str):
     # Setting up lists for similarity scores for SentBERT and USE algorithms
-    probs_USE = []
-
-    #Using an intent classifier to filter out courses
-
-    one_hot_encoder = OneHotEncoder()
-    departments = data[['dept_id']]
-    topic_labels = one_hot_encoder.fit_transform(departments).toarray()
-
-    # Loading model from file
-    trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_model.keras', 
-                                               custom_objects={'KerasLayer':hub.KerasLayer}, 
-                                               )
+    probs_USE = []    
 
     # Applying model to the query
     pred = trained_model.predict(model([request]))
-    chosen_department = one_hot_encoder.inverse_transform(pred)[0][0]    
 
-    narrowed_questions = data.loc[data['dept_id'] == chosen_department]
+    department_num = data[["dept_id"]].drop_duplicates()
+    zipped = zip(pred[0], list(department_num["dept_id"]))
+    res = sorted(zipped, key = lambda x: x[0], reverse=True)
+    
+    limit = 0
+    chosen_departments = []
+    for i in range(len(res)):
+        limit += res[i][0]
+        chosen_departments.append(res[i][1])
+        if limit >= 0.5:
+            break
+    
+
+    narrowed_questions = data[data["dept_id"].isin(chosen_departments)]
 
     # Vectorizing query using respective models
     request_vec_USE = np.array(model([request]))[0]
@@ -66,14 +71,14 @@ def aggregate_similarity(request: str):
 
     # Extracting the predicted question and answer based on highest similarity score
 
-    output = "{"
-    for i in range(len(sorted_USE)):
-        possible_class_USE = sorted_USE.iloc[i]
-        output += str(i) + ": " + str({'Course ID': possible_class_USE.course_id, "Probability": possible_class_USE.Probabilities_USE}) + ", "
+    # output = "{ data: ["
+    # for i in range(len(sorted_USE)):
+    #     possible_class_USE = sorted_USE.iloc[i]
+    #     output += "{ \"id\": " + str(i) + ": " + str({'Course ID': possible_class_USE.course_id, "Probability": possible_class_USE.Probabilities_USE}) + ", "
 
-    output += "}"
+    # output += "}"
 
-    return json.dumps(output)
+    possible_class_USE = sorted_USE[['course_id', 'name', 'dept_id', 'description', 'gen_ed', 'relationships.restrictions', 'relationships.additional_info', 'relationships.prereqs', 'relationships.credit_granted_for', 'Probabilities_USE']]
 
-
-aggregate_similarity("CMSC422")
+    return possible_class_USE.to_json(orient="records")
+# aggregate_similarity("Recommend a course that teaches Artificial Intelligence")
