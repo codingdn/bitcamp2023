@@ -7,6 +7,10 @@ import TextField from '@mui/material/TextField';
 import sample from "./data/sample_class.json";
 import ListCourses from "./components/ListCourses";
 import Box from "@mui/material/Box"
+import { Typography } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
+
+
 
 function App() {
   const [majors, setMajors] = useState([]);
@@ -15,15 +19,17 @@ function App() {
   const [toFindCourses, SetToFindCourses] = useState(false);
   const [courseSearch, setCourseSearch] = useState("");
   const [loadCourseCards, setLoadCourseCards] = useState(false);
-  const [recommendedCourses, setRecommendCourses] = useState(sample.data);
+  // const [recommendedCourses, setRecommendCourses] = useState(sample.data);
+  const [recommendedCourses, setRecommendCourses] = useState([]);
 
-  // useEffect(() => {
-  //   console.log(majors);
-  //   console.log(takenCourses);
-  //   console.log(courseSearch);
+  //use for debugging
+  useEffect(() => {
+    // console.log(majors);
+    // console.log(takenCourses);
+    console.log(courseSearch);
 
-  //   console.log(recommendedCourses);
-  // }, [majors, takenCourses, courseSearch, recommendedCourses]);
+    // console.log(recommendedCourses);
+  }, [majors, takenCourses, courseSearch, recommendedCourses]);
 
   return (
     <div className="App">
@@ -80,9 +86,32 @@ function App() {
                 }}
               />
             </Box>
+            {loadCourseCards && recommendedCourses.length === 0 ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                marginTop="20px"
+              >
+                <Typography sx={{ color: "red" }}>
+                  Whoops, something went wrong! Try another search term
+                </Typography>
+              </Box>
+            ) : (
+              ""
+            )}
             <SubmitButton setValue={setLoadCourseCards} />
-            {loadCourseCards ? (
+            {loadCourseCards && recommendedCourses.length > 0 ? (
               <ListCourses courses={recommendedCourses} />
+            ) : loadCourseCards && recommendedCourses.length === 0 ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                margin="30px"
+              >
+                <CircularProgress />
+              </Box>
             ) : (
               ""
             )}
