@@ -1,9 +1,11 @@
 import React from 'react'
+import Button from '@mui/material/Button';
 
-function nextButton() {
+
+function NextButton() {
   return (
-    <div>nextButton</div>
-  )
+    <Button variant="contained">Next</Button>
+    )
 }
 
-export default nextButton
+export default NextButton

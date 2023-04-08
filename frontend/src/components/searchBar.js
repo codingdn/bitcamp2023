@@ -2,18 +2,19 @@ import React from 'react'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import majors from '../data/majors.json';
+import dept from "../data/department_codes.json"
 
-function searchBar() {
+
+function SearchBar() {
     return (
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={majors.majors}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label="Movie" />}
-        />
-      );
+      <Autocomplete
+        multiple
+        options={dept.departments}
+        getOptionLabel={(option) => option.dept_id}
+        sx={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} label="Major" />}
+      />
+    );
 }
 
-export default searchBar
+export default SearchBar;
