@@ -18,8 +18,8 @@ function App() {
   const [toFindCourses, SetToFindCourses] = useState(false);
   const [courseSearch, setCourseSearch] = useState("");
   const [loadCourseCards, setLoadCourseCards] = useState(false);
-  // const [recommendedCourses, setRecommendCourses] = useState(sample.data);
-  const [recommendedCourses, setRecommendCourses] = useState([]);
+  const [recommendedCourses, setRecommendCourses] = useState(sample.data);
+  // const [recommendedCourses, setRecommendCourses] = useState([]);
 
   //use for debugging
   // useEffect(() => {
