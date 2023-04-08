@@ -5,7 +5,7 @@ const ListCourses = ({ courses }) => {
   return (
     <ul>
       {courses.map((course, index) => (
-        <CourseCard key={index} course={course} />
+        <CourseCard course={course} />
       ))}
     </ul>
   );

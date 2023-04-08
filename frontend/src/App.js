@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import sample from "./data/sample_class.json";
 import ListCourses from "./components/ListCourses";
 
+
 function App() {
   const [majors, setMajors] = useState([]);
   const [takenCourses, setTakenCourses] = useState([]);
@@ -14,20 +15,19 @@ function App() {
   const [toFindCourses, SetToFindCourses] = useState(false);
   const [courseSearch, setCourseSearch] = useState("");
   const [loadCourseCards, setLoadCourseCards] = useState(false);
-  const [recommendedCourses, setRecommendCourses] = useState([sample.data]);
+  const [recommendedCourses, setRecommendCourses] = useState(sample.data);
 
-  useEffect(() => {
-    console.log(majors);
-    console.log(takenCourses);
-    console.log(courseSearch);
+  // useEffect(() => {
+  //   console.log(majors);
+  //   console.log(takenCourses);
+  //   console.log(courseSearch);
 
-    console.log(recommendedCourses);
-  }, [majors, takenCourses, courseSearch, recommendedCourses]);
+  //   console.log(recommendedCourses);
+  // }, [majors, takenCourses, courseSearch, recommendedCourses]);
 
   return (
     <div className="App">
       <h1>RecommendMe</h1>
-      <ListCourses courses={recommendedCourses}/>
       <h2>Insert Major(s) (Department Code)</h2>
       <SearchBar
         searchType="major"
@@ -66,7 +66,13 @@ function App() {
                 setCourseSearch(event.target.value);
               }}
             />
+            <br/>
             <SubmitButton setValue={setLoadCourseCards} />
+            {loadCourseCards ? (
+              <ListCourses courses={recommendedCourses} />
+            ) : (
+              ""
+            )}
           </>
         ) : (
           ""
