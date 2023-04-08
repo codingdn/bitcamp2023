@@ -9,6 +9,7 @@ import ListCourses from "./components/ListCourses";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import logo from "./assets/logo.svg";
 
 //Entry point for application
 function App() {
@@ -31,10 +32,13 @@ function App() {
 
   return (
     <div className="App">
+      <div className="logo">
+        <img alt="logo" width="70px" height="70px" src={logo} />
+      </div>
       <h1>RecommendMe</h1>
 
       {/**Input Major */}
-      <h2 className="section-header">Insert Major(s) (Department Code)</h2>
+      <h2 className="section-header">Insert Major(s) (Department Code) </h2>
       <div className="search-section">
         <SearchBar
           searchType="major"

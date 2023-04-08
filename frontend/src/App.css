@@ -1,14 +1,22 @@
-h1,h2,h3 {
+h1,
+h2,
+h3 {
   text-align: center;
 }
 
 .section-header {
-  color: #454545
+  color: #454545;
 }
 
 .search-section {
   width: 500;
   height: 80;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  margin-top: 10px;
   display: flex;
   justify-content: center;
 }
