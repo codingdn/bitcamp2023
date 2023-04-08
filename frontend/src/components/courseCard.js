@@ -4,8 +4,7 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
 function CourseCard(props) {
-  // console.log("this is course data");
-  // console.log(props.course);
+  
 
   return (
     <Card>
@@ -22,6 +21,7 @@ function CourseCard(props) {
           <li>Additional Info: {props.course.additional_info}</li>
           <li>Credit Granted For: {props.course.credit_granted_for}</li>
         </ul>
+        
         {props.course.gened.length > 0 ? (
           <div>
             <h3>Gened</h3>

@@ -6,7 +6,7 @@ import SubmitButton from './components/SubmitButton';
 import TextField from '@mui/material/TextField';
 import sample from "./data/sample_class.json";
 import ListCourses from "./components/ListCourses";
-
+import Box from "@mui/material/Box"
 
 function App() {
   const [majors, setMajors] = useState([]);
@@ -28,24 +28,28 @@ function App() {
   return (
     <div className="App">
       <h1>RecommendMe</h1>
-      <h2>Insert Major(s) (Department Code)</h2>
-      <SearchBar
-        searchType="major"
-        values={majors}
-        setValue={setMajors}
-        isDisabled={toCourses}
-      />
+      <h2 className="section-header">Insert Major(s) (Department Code)</h2>
+      <div className="search-section">
+        <SearchBar
+          searchType="major"
+          values={majors}
+          setValue={setMajors}
+          isDisabled={toCourses}
+        />
+      </div>
       <NextButton value={toCourses} setValue={setToCourses} />
       <div>
         {toCourses ? (
           <>
-            <h2>Select Taken Courses</h2>
-            <SearchBar
-              searchType="takenCourses"
-              values={takenCourses}
-              setValue={setTakenCourses}
-              isDisabled={toFindCourses}
-            />
+            <h2 className="section-header">Select Taken Courses</h2>
+            <div className="search-section">
+              <SearchBar
+                searchType="takenCourses"
+                values={takenCourses}
+                setValue={setTakenCourses}
+                isDisabled={toFindCourses}
+              />
+            </div>
             <NextButton value={toFindCourses} setValue={SetToFindCourses} />
           </>
         ) : (
@@ -55,18 +59,27 @@ function App() {
       <div>
         {toFindCourses ? (
           <>
-            <h3>Find Courses</h3>
-            <TextField
-              id="course-search"
-              label="Search Courses"
-              variant="outlined"
-              placeholder="e.g. Recommend me a course that teaches artificial intelligence"
-              multiline
-              onChange={(event) => {
-                setCourseSearch(event.target.value);
-              }}
-            />
-            <br/>
+            <h2 className="section-header">Find Courses</h2>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              marginTop="20px"
+            >
+              <TextField
+                id="course-search"
+                label="Search Courses"
+                variant="outlined"
+                placeholder="e.g. Recommend me a course that teaches artificial intelligence"
+                multiline
+                onChange={(event) => {
+                  setCourseSearch(event.target.value);
+                }}
+                sx={{
+                  width: 450,
+                }}
+              />
+            </Box>
             <SubmitButton setValue={setLoadCourseCards} />
             {loadCourseCards ? (
               <ListCourses courses={recommendedCourses} />

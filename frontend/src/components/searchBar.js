@@ -23,7 +23,7 @@ function SearchBar(props) {
           getOptionLabel={(option) =>
             props.searchType === "major" ? option.dept_id : option.course_id
           }
-          sx={{ width: 300 }}
+          sx={{ width: 600 }}
           renderInput={(params) => (
             <TextField
               {...params}
