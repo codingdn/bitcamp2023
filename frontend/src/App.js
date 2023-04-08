@@ -2,25 +2,39 @@ import React, { useState, useEffect } from "react";
 import './App.css';
 import SearchBar from './components/SearchBar';
 import NextButton from './components/NextButton';
+import SubmitButton from './components/SubmitButton';
 import TextField from '@mui/material/TextField';
-
+import sample from "./data/sample_class.json";
+import ListCourses from "./components/ListCourses";
 
 function App() {
   const [majors, setMajors] = useState([]);
   const [takenCourses, setTakenCourses] = useState([]);
   const [toCourses, setToCourses] = useState(false);
-  const [findCourses, setFindCourses] = useState(false);
+  const [toFindCourses, SetToFindCourses] = useState(false);
+  const [courseSearch, setCourseSearch] = useState("");
+  const [loadCourseCards, setLoadCourseCards] = useState(false);
+  const [recommendedCourses, setRecommendCourses] = useState([sample.data]);
 
   useEffect(() => {
     console.log(majors);
-    console.log(takenCourses)
-  }, [majors, takenCourses]);
+    console.log(takenCourses);
+    console.log(courseSearch);
+
+    console.log(recommendedCourses);
+  }, [majors, takenCourses, courseSearch, recommendedCourses]);
 
   return (
     <div className="App">
       <h1>RecommendMe</h1>
+      <ListCourses courses={recommendedCourses}/>
       <h2>Insert Major(s) (Department Code)</h2>
-      <SearchBar searchType="major" values={majors} setValue={setMajors} isDisabled={toCourses}/>
+      <SearchBar
+        searchType="major"
+        values={majors}
+        setValue={setMajors}
+        isDisabled={toCourses}
+      />
       <NextButton value={toCourses} setValue={setToCourses} />
       <div>
         {toCourses ? (
@@ -30,25 +44,29 @@ function App() {
               searchType="takenCourses"
               values={takenCourses}
               setValue={setTakenCourses}
-              isDisabled={findCourses}
+              isDisabled={toFindCourses}
             />
-            <NextButton value={findCourses} setValue={setFindCourses} />
+            <NextButton value={toFindCourses} setValue={SetToFindCourses} />
           </>
         ) : (
           ""
         )}
       </div>
       <div>
-        {findCourses ? (
+        {toFindCourses ? (
           <>
             <h3>Find Courses</h3>
             <TextField
-              id="outlined-basic"
+              id="course-search"
               label="Search Courses"
               variant="outlined"
               placeholder="e.g. Recommend me a course that teaches artificial intelligence"
               multiline
+              onChange={(event) => {
+                setCourseSearch(event.target.value);
+              }}
             />
+            <SubmitButton setValue={setLoadCourseCards} />
           </>
         ) : (
           ""
