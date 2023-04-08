@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import dept from "../data/department_codes.json"
-import courseCode from "../data/department_codes.json"
+import courseCode from "../data/course_id.json"
 
 
 function SearchBar(props) {
@@ -13,19 +13,21 @@ function SearchBar(props) {
           multiple
           value={props.values}
           disabled={props.isDisabled}
-          options={ props.isDisabled ? [] :
-            props.searchType === "major"
+          options={
+            props.isDisabled
+              ? []
+              : props.searchType === "major"
               ? dept.departments
-              : courseCode.course_id
+              : courseCode.courses
           }
           getOptionLabel={(option) =>
-            props.searchType === "major" ? option.dept_id : option
+            props.searchType === "major" ? option.dept_id : option.course_id
           }
           sx={{ width: 300 }}
           renderInput={(params) => (
             <TextField
               {...params}
-              label={props.searchType ? "Major" : "Courses"}
+              label={props.searchType === "major" ? "Major" : "Courses"}
             />
           )}
           onChange={(event, newValues) => {

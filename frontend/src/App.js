@@ -20,17 +20,18 @@ function App() {
     <div className="App">
       <h1>RecommendMe</h1>
       <h2>Insert Major(s) (Department Code)</h2>
-      <SearchBar searchType="major" values={majors} setValue={setMajors} />
+      <SearchBar searchType="major" values={majors} setValue={setMajors} isDisabled={toCourses}/>
       <NextButton value={toCourses} setValue={setToCourses} />
       <div>
         {toCourses ? (
           <>
             <h2>Select Taken Courses</h2>
-            {/* <SearchBar
+            <SearchBar
               searchType="takenCourses"
               values={takenCourses}
               setValue={setTakenCourses}
-            /> */}
+              isDisabled={findCourses}
+            />
             <NextButton value={findCourses} setValue={setFindCourses} />
           </>
         ) : (
@@ -43,8 +44,10 @@ function App() {
             <h3>Find Courses</h3>
             <TextField
               id="outlined-basic"
-              label="Outlined"
+              label="Search Courses"
               variant="outlined"
+              placeholder="e.g. Recommend me a course that teaches artificial intelligence"
+              multiline
             />
           </>
         ) : (
