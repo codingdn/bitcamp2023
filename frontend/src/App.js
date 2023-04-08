@@ -17,17 +17,7 @@ function App() {
       <h1>RecommendMe</h1>
       <h2>Insert Major (Department Code)</h2>
       <SearchBar searchType="major" values={majors} setValue={setMajors}/>
-      <h3>Selected Major(s):</h3>
-      <div>
-        <ul>
-        {majors.forEach((major) => {
-          <li>{major.department}</li>
-        })}
-        </ul>
-      </div>
       <NextButton />
-
-      <h3>Select Courses Taken</h3>
       <SearchBar searchType="major" values={majors} setValue={setMajors}/>
       <NextButton />
 
