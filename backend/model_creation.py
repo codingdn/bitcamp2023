@@ -1,76 +1,94 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
-from keras.models import Sequential
-import keras
 import tensorflow as tf
 import tensorflow_hub as hub
-import matplotlib.pyplot as plt
 import numpy as np
 
 # Read in topics and questions from CSV
 data = pd.read_csv('backend/resources/all_courses.csv')
-needed = data[]
 
-# training_data, testing_data = train_test_split(data, test_size=0.30, shuffle=True)
+needed = data[["dept_id", "name", "department", "description"]]
 
-# emotion_num = data.drop_duplicates(subset=["Emotion"])["Emotion"].size
+needed['Combined'] = needed[needed.columns[1:]].apply(
+    lambda x: ','.join(x.dropna().astype(str)),
+    axis=1
+)
 
-# training_emotions = training_data[["Emotion"]]
-# training_text = training_data["Text"].to_numpy()
+training_data = needed.sample(frac = 1)
 
-# testing_emotions = testing_data[["Emotion"]]
-# testing_text = testing_data["Text"].to_numpy()
+# training_data, testing_data = train_test_split(needed, test_size=0.1, shuffle=True)
 
+department_num = data.drop_duplicates(subset=["dept_id"])["dept_id"].size
 
-# # One hot encoding emotions
-# one_hot_encoder = OneHotEncoder()
-# fitted = one_hot_encoder.fit(data[["Emotion"]])
+training_departments = training_data[["dept_id"]]
+training_text = training_data["Combined"].to_numpy()
 
-# training_emotion_labels = fitted.transform(training_emotions).toarray()
-# testing_emotion_labels = fitted.transform(testing_emotions).toarray()
+# testing_department = testing_data[["dept_id"]]
+# testing_text = testing_data["Combined"].to_numpy()
 
-# # Vectorizing text setup
-# model_text = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
-# hub_layer = hub.KerasLayer(model_text, input_shape=[], dtype=tf.string)
+# One hot encoding department_ids
+one_hot_encoder = OneHotEncoder()
+fitted = one_hot_encoder.fit(data[["dept_id"]])
+training_dept_id_labels = fitted.transform(training_departments).toarray()
+# testing_dept_id_labels = fitted.transform(testing_department).toarray()
+
+# Vectorizing text setup
+model_text = "https://tfhub.dev/google/universal-sentence-encoder/4"
+hub_layer = hub.KerasLayer(model_text, input_shape=[], dtype=tf.string, trainable=True)
 
 # # Building model to train intent classifier
-# model = tf.keras.Sequential()
-# model.add(hub_layer)
-# # model.add(tf.keras.layers.Normalization())
-# model.add(tf.keras.layers.Dense(64, activation='relu'))
-# model.add(tf.keras.layers.Dropout(0.1))
-# model.add(tf.keras.layers.Dense(64, activation='relu'))
-# model.add(tf.keras.layers.Dropout(0.1))
-# model.add(tf.keras.layers.Dense(128, activation='relu'))
-# model.add(tf.keras.layers.Dense(emotion_num, activation='softmax'))
+model = tf.keras.Sequential()
 
-# print(model.summary())
+model.add(hub_layer)
+# model.add(tf.keras.layers.Normalization())
+model.add(tf.keras.layers.Dense(500)),
+model.add(tf.keras.layers.Dropout(0.5))
+model.add(tf.keras.layers.Dense(216)),
+model.add(tf.keras.layers.Dropout(0.2))
+model.add(tf.keras.layers.Dense(department_num, activation="softmax"))
 
-# # Optimizing model
-# model.compile(
-#     optimizer = 'adam', 
-#     loss = tf.keras.losses.CategoricalCrossentropy(),
-#     metrics = [tf.keras.metrics.CategoricalAccuracy(name='accuracy')],
-#     )
+print(model.summary())
+
+# Optimizing model
+model.compile(
+    optimizer = 'adam', 
+    loss = tf.keras.losses.CategoricalCrossentropy(),
+    metrics = [tf.keras.metrics.CategoricalAccuracy(name='accuracy')],
+    )
 
 
-# x_val = np.array(training_text[:10000])
-# partial_x_train = np.array(training_text[10000:])
+reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
+            mode = 'auto',
+            monitor='loss', factor=0.02,
+            patience=2, min_lr=0.001)
 
-# y_val = np.array(training_emotion_labels[:10000])
-# partial_y_train = np.array(training_emotion_labels[10000:])
 
-# # Fitting model to input and output data and optimizing on validation data
-# history = model.fit(partial_x_train, 
-#                     partial_y_train, 
-#                     validation_data = (x_val, y_val),
-#                     epochs = 5,
-#                     batch_size = 512, 
-#                     verbose = 1)
+# Fitting model to input and output data and optimizing on validation data
+history = model.fit(training_text, 
+                    training_dept_id_labels, 
+                    # validation_data = (x_val, y_val),
+                    epochs = 15,
+                    batch_size = 512, 
+                    verbose = 1,
+                    callbacks = [reduce_lr])
 
-# results = model.evaluate(testing_text, testing_emotion_labels)
+# results = model.evaluate(testing_text, testing_dept_id_labels)
 # print(results)
 
-# # # Saving model to file
-# # model.save('modules/models/intent_classifier_model')
+# Saving model to file
+model.save('backend/resources/intent_classifier_model')
+
+pred = model.predict(["recommend a course about fire safety", "CMSC", "Give a one credit course on coding interviews"])
+# print(pred)
+
+department_num = data[["dept_id"]].drop_duplicates()
+
+zipped = zip(pred[0], list(department_num["dept_id"]))
+
+res = sorted(zipped, key = lambda x: x[0], reverse=True)
+
+print(str(res))
+
+course = one_hot_encoder.inverse_transform(pred)
+print(course)
