@@ -5,15 +5,25 @@ import Autocomplete from '@mui/material/Autocomplete';
 import dept from "../data/department_codes.json"
 
 
-function SearchBar() {
+function SearchBar(props) {
     return (
-      <Autocomplete
-        multiple
-        options={dept.departments}
-        getOptionLabel={(option) => option.dept_id}
-        sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Major" />}
-      />
+      <>
+        <Autocomplete
+          multiple
+          value={props.values}
+          options={
+            props.searchType === "major" ? dept.departments : dept.departments
+          }
+          getOptionLabel={(option) =>
+            props.searchType === "major" ? option.dept_id : option.dept_id
+          }
+          sx={{ width: 300 }}
+          renderInput={(params) => <TextField {...params} label="Major" />}
+          onChange={(event, newValues) => {
+            props.setValue([...newValues])
+          }}
+        />
+      </>
     );
 }
 
