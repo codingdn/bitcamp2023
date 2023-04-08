@@ -12,7 +12,8 @@ function SearchBar(props) {
         <Autocomplete
           multiple
           value={props.values}
-          options={
+          disabled={props.isDisabled}
+          options={ props.isDisabled ? [] :
             props.searchType === "major"
               ? dept.departments
               : courseCode.course_id
