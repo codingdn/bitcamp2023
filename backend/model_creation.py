@@ -7,18 +7,6 @@ import numpy as np
 
 # Read in topics and questions from CSV
 data = pd.read_csv('backend/resources/all_courses.csv')
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-needed = data[]
->>>>>>> Stashed changes
-=======
-needed = data[]
->>>>>>> Stashed changes
-=======
-needed = data[]
->>>>>>> Stashed changes
 
 needed = data[["dept_id", "name", "department", "description"]]
 
