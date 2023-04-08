@@ -1,5 +1,5 @@
 import pandas as pd
-from scipy import spatialc
+from scipy import spatial
 import numpy as np
 import tensorflow_hub as hub
 import json
@@ -23,29 +23,24 @@ model = hub.load(model_url)
 text_vec_list = []
 text_vec_USE = np.array(model(text))
 
+one_hot_encoder = OneHotEncoder()
+departments = data[['dept_id']]
+one_hot_encoder.fit_transform(departments).toarray()
+trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_model')
 
 data['text_vec'] = text_vec_USE.tolist()
 
 def aggregate_similarity(request: str):
     # Setting up lists for similarity scores for SentBERT and USE algorithms
-    probs_USE = []
-
-    #Using an intent classifier to filter out courses
-
-    one_hot_encoder = OneHotEncoder()
-    departments = data[['dept_id']]
-    topic_labels = one_hot_encoder.fit_transform(departments).toarray()
-
-    # Loading model from file
-    trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_model.keras', 
-                                               custom_objects={'KerasLayer':hub.KerasLayer}, 
-                                               )
+    probs_USE = []    
 
     # Applying model to the query
     pred = trained_model.predict(model([request]))
     chosen_department = one_hot_encoder.inverse_transform(pred)[0][0]    
 
     narrowed_questions = data.loc[data['dept_id'] == chosen_department]
+
+    # narrowed_questions = data
 
     # Vectorizing query using respective models
     request_vec_USE = np.array(model([request]))[0]
@@ -74,6 +69,3 @@ def aggregate_similarity(request: str):
     output += "}"
 
     return json.dumps(output)
-
-
-aggregate_similarity("CMSC422")
