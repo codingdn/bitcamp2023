@@ -1,2 +1,2 @@
-backend/resources/intent_classifier_model/
+resources/intent_classifier_model/*
 .DS_Store
