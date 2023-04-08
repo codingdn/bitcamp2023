@@ -63,6 +63,8 @@ function App() {
       recommendedCourses: recommendedCourses,
     };
 
+    console.log(newSessionInfo);
+
     fetch("http://localhost:8000/request/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
