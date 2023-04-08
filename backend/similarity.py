@@ -36,11 +36,21 @@ def aggregate_similarity(request: str):
 
     # Applying model to the query
     pred = trained_model.predict(model([request]))
-    chosen_department = one_hot_encoder.inverse_transform(pred)[0][0]    
 
-    narrowed_questions = data.loc[data['dept_id'] == chosen_department]
+    department_num = data[["dept_id"]].drop_duplicates()
+    zipped = zip(pred[0], list(department_num["dept_id"]))
+    res = sorted(zipped, key = lambda x: x[0], reverse=True)
+    
+    limit = 0
+    chosen_departments = []
+    for i in range(len(res)):
+        limit += res[i][0]
+        chosen_departments.append(res[i][1])
+        if limit >= 0.5:
+            break
+    
 
-    # narrowed_questions = data
+    narrowed_questions = data[data["dept_id"].isin(chosen_departments)]
 
     # Vectorizing query using respective models
     request_vec_USE = np.array(model([request]))[0]
@@ -61,11 +71,14 @@ def aggregate_similarity(request: str):
 
     # Extracting the predicted question and answer based on highest similarity score
 
-    output = "{"
-    for i in range(len(sorted_USE)):
-        possible_class_USE = sorted_USE.iloc[i]
-        output += str(i) + ": " + str({'Course ID': possible_class_USE.course_id, "Probability": possible_class_USE.Probabilities_USE}) + ", "
+    # output = "{ data: ["
+    # for i in range(len(sorted_USE)):
+    #     possible_class_USE = sorted_USE.iloc[i]
+    #     output += "{ \"id\": " + str(i) + ": " + str({'Course ID': possible_class_USE.course_id, "Probability": possible_class_USE.Probabilities_USE}) + ", "
 
-    output += "}"
+    # output += "}"
 
-    return json.dumps(output)
+    possible_class_USE = sorted_USE[['course_id', 'name', 'dept_id', 'description', 'gen_ed', 'relationships.restrictions', 'relationships.additional_info', 'relationships.prereqs', 'relationships.credit_granted_for', 'Probabilities_USE']]
+
+    return possible_class_USE.to_json(orient="records")
+# aggregate_similarity("Recommend a course that teaches Artificial Intelligence")
