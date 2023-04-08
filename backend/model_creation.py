@@ -10,7 +10,7 @@ import numpy as np
 
 # Read in topics and questions from CSV
 data = pd.read_csv('backend/resources/all_courses.csv')
-print(data)
+needed = data[]
 
 # training_data, testing_data = train_test_split(data, test_size=0.30, shuffle=True)
 
