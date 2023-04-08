@@ -24,4 +24,4 @@ Here is the user flow:
 * Frontend - React
 * Backend - Fast API
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/749cd8cf74e6438b82ce9992262dc04c" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+Demo: https://www.loom.com/share/382022aaece8493784320ceb49e41506 
