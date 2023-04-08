@@ -2,6 +2,7 @@ import React from 'react'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
+//data jsons to store majors and courses at universities
 import dept from "../data/department_codes.json"
 import courseCode from "../data/course_id.json"
 

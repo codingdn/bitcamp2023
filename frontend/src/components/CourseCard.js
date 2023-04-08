@@ -22,11 +22,15 @@ function CourseCard(props) {
           height: "100px",
         }}
       >
+
+        {/**Card listed in grid format */}
         <CardActions onClick={handleOpen}>
           <h3>
             {props.course.course_id} <br /> {props.course.name}
           </h3>
         </CardActions>
+
+        {/**Popup when card is clicked to see more information  */}
         <Modal
           open={open}
           onClose={handleClose}

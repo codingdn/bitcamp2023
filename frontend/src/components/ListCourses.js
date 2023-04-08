@@ -3,6 +3,7 @@ import CourseCard from './CourseCard';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 
+//Courses listed in a grid format
 const ListCourses = ({ courses }) => {
   return (
     <Box sx={{ flexGrow: 1, padding: "20px"}}>
