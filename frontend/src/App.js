@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
-import SearchBar from './components/SearchBar';
-import NextButton from './components/NextButton';
+import SearchBar from './components/searchBar';
+import NextButton from './components/nextButton';
+// import "cards" array
+import CourseCard from './components/courseCard'
 import TextField from '@mui/material/TextField';
+import { Button } from "@mui/material";
 
 
 function App() {
@@ -10,6 +13,17 @@ function App() {
   const [takenCourses, setTakenCourses] = useState([]);
   const [toCourses, setToCourses] = useState(false);
   const [findCourses, setFindCourses] = useState(false);
+  const [cards, setCards] = useState([]);
+  const [desc, setDesc] = useState("");
+
+  const descriptionChange = event => setDesc(event.target.value)
+
+  // add cards after pressing enter on text box
+  function enterPress(e) {
+    if (e.key === "Enter") {
+      setCards([CourseCard("CMSC430", "Compilers", "Cool course!")])
+    }
+  }
 
   useEffect(() => {
     console.log(majors);
@@ -45,12 +59,28 @@ function App() {
               id="outlined-basic"
               label="Outlined"
               variant="outlined"
+              value={desc}
+              onChange={descriptionChange}
+              onKeyDown={enterPress}
             />
+            <Button variant="contained" onClick={() => [setCards([]), setDesc("")]}>Clear</Button>
           </>
         ) : (
           ""
         )}
       </div>
+
+      {/* add cards */}
+      <div>
+          {desc !=="" ? (
+            cards.map(card => <>{card}</>)
+
+          ) : (
+            ""
+          )}
+      </div>
+      
+
     </div>
   );
 }
