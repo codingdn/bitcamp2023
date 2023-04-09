@@ -22,8 +22,6 @@ function CourseCard(props) {
           height: "100px",
         }}
       >
-
-        {/**Card listed in grid format */}
         <CardActions onClick={handleOpen}>
           <h3>
             {props.course.course_id} <br /> {props.course.name}
@@ -58,9 +56,9 @@ function CourseCard(props) {
                 ) : null}
                 <li>Additional Info: {props.course.additional_info}</li>
                 <li>Credit Granted For: {props.course.credit_granted_for}</li>
-                {props.course.gened.length > 0 ? (
+                {/* {props.course.gened.length > 0 ? (
                   <li>Gened: {props.course.gened.toString()}</li>
-                ) : null}
+                ) : null} */}
               </ul>
             </Card>
           </Box>
