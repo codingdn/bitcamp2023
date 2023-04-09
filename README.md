@@ -25,3 +25,15 @@ Here is the user flow:
 * Backend - Fast API
 
 Demo: https://www.loom.com/share/5b50535990544b97a37a7f16f72178f1
+
+
+### How to run the app
+
+#### Frontend:
+````md
+```shell
+cd frontend
+npm install
+npm start
+```
+````
