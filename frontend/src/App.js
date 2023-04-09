@@ -5,10 +5,10 @@ import NextButton from "./components/NextButton";
 import TextField from "@mui/material/TextField";
 import ListCourses from "./components/ListCourses";
 import Box from "@mui/material/Box";
-// import { radioClasses, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import logo from "./assets/logo.svg";
 import Button from "@mui/material/Button";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme({
@@ -58,7 +58,8 @@ function App() {
 
     setTimeout(() => {
       setLoading(false);
-    }, 4000);
+      setLoadCourseCards(false);
+    }, 3000);
   };
 
   const handleClear = (event) => {
@@ -73,7 +74,12 @@ function App() {
           <div className="logo">
             <img alt="logo" width="70px" height="70px" src={logo} />
           </div>
-          <h1>RecommendMe</h1>
+          <h1>
+            RecommendMe
+            <a href="https://github.com/codingdn/bitcamp2023">
+              <GitHubIcon sx={{ fontSize: 45, marginLeft: "10px" }} />
+            </a>
+          </h1>
           <p>
             This project solves the issue of students at UMD who do not know
             what classes to take. Searching on Testudo simply returns a query
@@ -145,7 +151,7 @@ function App() {
                       setCourseSearch(event.target.value);
                     }}
                     sx={{
-                      width: 450,
+                      width: 600,
                     }}
                   />
                 </Box>
@@ -157,7 +163,7 @@ function App() {
                     alignItems="center"
                     marginTop="20px"
                   >
-                    {!(classes.length === 0 && loadCourseCards && loading) ? (
+                    {!(loadCourseCards && loading) ? (
                       <Button
                         variant="contained"
                         onClick={(event) => {
@@ -191,11 +197,7 @@ function App() {
                     </Box>
                   ) : null}
                 </ThemeProvider>
-                {/* {!loading && loadCourseCards ? ( */}
                 <ListCourses courses={classes} />
-                {/* ) : loading && loadCourseCards ? (
-                  <CircularProgress />
-                ) : null} */}
               </>
             ) : (
               ""

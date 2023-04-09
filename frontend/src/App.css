@@ -35,3 +35,12 @@ h3 {
 .section-one-container {
   margin-top: 20%;
 }
+
+a :any-link {
+  text-decoration: none;
+}
+
+h1 {
+  font-family: "Andal Mono", "Courier New", monospace;
+  font-size: 55px;
+}

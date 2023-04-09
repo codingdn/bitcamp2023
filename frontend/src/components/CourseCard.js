@@ -50,7 +50,7 @@ function CourseCard(props) {
                 padding: "20px",
               }}
             >
-              <h3>{props.course.course_id}</h3>
+              <h3>{props.course.course_id} - {props.course.name}</h3>
               <p>{props.course.description}</p>
               <ul>
                 <li>Prereqs: {props.course.prereqs}</li>
