@@ -40,6 +40,9 @@ function CourseCard(props) {
             justifyContent="center"
             alignItems="center"
             marginTop="20px"
+            position="absolute"
+            top="35%"
+            left="30%"
           >
             <Card
               sx={{

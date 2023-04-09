@@ -20,3 +20,13 @@ h3 {
   display: flex;
   justify-content: center;
 }
+
+.flex-parent-element {
+  display: flex;
+  width: 80%;
+}
+
+.flex-child-element {
+  flex: 1;
+  margin: 10px;
+}

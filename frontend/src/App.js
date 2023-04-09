@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar";
 import NextButton from "./components/NextButton";
@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import ListCourses from "./components/ListCourses";
 import Box from "@mui/material/Box";
 // import { radioClasses, Typography } from "@mui/material";
-// import CircularProgress from "@mui/material/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import logo from "./assets/logo.svg";
 import Button from "@mui/material/Button";
 
@@ -16,9 +16,11 @@ const theme = createTheme({
     primary: {
       main: "#e21833",
     },
+    secondary: {
+      main: "#000000",
+    },
   },
 });
-
 
 //Entry point for application
 function App() {
@@ -29,19 +31,21 @@ function App() {
   const [courseSearch, setCourseSearch] = useState("");
   const [loadCourseCards, setLoadCourseCards] = useState(false);
   const [classes, setClasses] = useState([]);
-  
-  // useEffect(() => {
-  //   console.log(classes)
-  // }, []);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(loading);
+  }, []);
 
   const handleSubmit = async (event) => {
+    setLoading(true);
     setLoadCourseCards(!loadCourseCards);
 
     const newSearch = {
-      "query": courseSearch,
-      "majors": majors,
-      "takenCourses": takenCourses
-    }
+      query: courseSearch,
+      takenCourses: takenCourses,
+      majors: majors,
+    };
 
     const results = await fetch("http://localhost:8000/search/", {
       method: "POST",
@@ -50,136 +54,144 @@ function App() {
     });
 
     const resultsData = await results.json();
-    setClasses(resultsData.slice(0,11));
+    setClasses(resultsData.slice(0, 6));
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 4000);
+  };
+
+  const handleClear = (event) => {
+    setClasses([]);
+    setCourseSearch("");
   };
 
   return (
-      <div className="App">
-        <div className="logo">
-          <img alt="logo" width="70px" height="70px" src={logo} />
-        </div>
-        <h1>RecommendMe</h1>
-
-        <h2 className="section-header">Insert Major(s) (Department Code) </h2>
-        <div className="search-section">
-          <SearchBar
-            searchType="major"
-            values={majors}
-            setValue={setMajors}
-            isDisabled={toCourses}
-          />
-        </div>
-        <NextButton value={toCourses} setValue={setToCourses} />
-        <div>
-          {toCourses ? (
-            <>
-              {/**Input Courses Taken */}
-              <h2 className="section-header">Select Taken Courses</h2>
-              <div className="search-section">
-                <SearchBar
-                  searchType="takenCourses"
-                  values={takenCourses}
-                  setValue={setTakenCourses}
-                  isDisabled={toFindCourses}
-                />
-              </div>
-              <NextButton value={toFindCourses} setValue={SetToFindCourses} />
-            </>
-          ) : (
-            ""
-          )}
-        </div>
-        <div>
-          {toFindCourses ? (
-            <>
-              {/**Input Search */}
-              <h2 className="section-header">Find Courses</h2>
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                marginTop="20px"
-              >
-                <TextField
-                  id="course-search"
-                  label="Search Courses"
-                  variant="outlined"
-                  placeholder="e.g. Recommend me a course that teaches artificial intelligence"
-                  multiline
-                  onChange={(event) => {
-                    setCourseSearch(event.target.value);
-                  }}
-                  sx={{
-                    width: 450,
-                  }}
-                />
-              </Box>
-
-              {/**Error code if no courses found */}
-              {/* {loadCourseCards && recommendedCourses.length === 0 ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  marginTop="20px"
-                >
-                  <Typography sx={{ color: "red" }}>
-                    Whoops, something went wrong! Try another search term
-                  </Typography>
-                </Box>
-              ) : (
-                ""
-              )} */}
-              <ThemeProvider theme={theme}>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  marginTop="20px"
-                >
-                  <Button
-                    variant="contained"
-                    onClick={(event) => {
-                      // setLoadCourseCards(!loadCourseCards);
-                      handleSubmit(event);
-                    }}
-                    color="primary"
-                  >
-                    Submit
-                  </Button>
-                </Box>
-              </ThemeProvider>
-
-              {/**Spinner to wait for results*/}
-              <ListCourses courses={classes} />
-
-              {/* <h2>Recent Searches:</h2>
-              <ul>
-                {searches.map((search, index) => (
-                  <li>{search.name}</li>
-                ))}
-              </ul> */}
-
-              {/* {loadCourseCards && recommendedCourses.length > 0 ? (
-                <ListCourses courses={recommendedCourses} />
-              ) : loadCourseCards && recommendedCourses.length === 0 ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  margin="30px"
-                >
-                  <CircularProgress />
-                </Box>
-              ) : (
-                ""
-              )} */}
-            </>
-          ) : (
-            ""
-          )}
+    <div className="flex-parent-element">
+      <div className="flex-child-element section-one-container">
+        <div className="section-one">
+          <div className="logo">
+            <img alt="logo" width="70px" height="70px" src={logo} />
+          </div>
+          <h1>RecommendMe</h1>
         </div>
       </div>
+
+      <div className="flex-child-element">
+        <div>
+          <h2 className="section-header">Insert Major(s) (Department Code) </h2>
+          <div className="search-section">
+            <SearchBar
+              searchType="major"
+              values={majors}
+              setValue={setMajors}
+              isDisabled={toCourses}
+            />
+          </div>
+          <NextButton
+            value={toCourses}
+            setValue={setToCourses}
+            isDisabled={majors.length === 0}
+          />
+          <div>
+            {toCourses ? (
+              <>
+                {/**Input Courses Taken */}
+                <h2 className="section-header">Select Taken Courses</h2>
+                <div className="search-section">
+                  <SearchBar
+                    searchType="takenCourses"
+                    values={takenCourses}
+                    setValue={setTakenCourses}
+                    isDisabled={toFindCourses}
+                  />
+                </div>
+                <NextButton
+                  value={toFindCourses}
+                  setValue={SetToFindCourses}
+                  isDisabled={takenCourses.length === 0}
+                />
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+          <div>
+            {toFindCourses ? (
+              <>
+                {/**Input Search */}
+                <h2 className="section-header">Find Courses</h2>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  marginTop="20px"
+                >
+                  <TextField
+                    id="course-search"
+                    label="Search Courses"
+                    variant="outlined"
+                    placeholder="e.g. Recommend me a course that teaches artificial intelligence"
+                    multiline
+                    onChange={(event) => {
+                      setCourseSearch(event.target.value);
+                    }}
+                    sx={{
+                      width: 450,
+                    }}
+                  />
+                </Box>
+
+                <ThemeProvider theme={theme}>
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    marginTop="20px"
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={(event) => {
+                        handleSubmit(event);
+                      }}
+                      color="primary"
+                      disabled={courseSearch.length === 0 || loading}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                  {classes.length !== 0 && !loading ? (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      marginTop="20px"
+                    >
+                      <Button
+                        variant="contained"
+                        onClick={(event) => {
+                          handleClear(event);
+                        }}
+                        color="secondary"
+                      >
+                        Clear
+                      </Button>
+                    </Box>
+                  ) : null}
+                </ThemeProvider>
+                {!loading && loadCourseCards ? (
+                  <ListCourses courses={classes} />
+                ) : loading && loadCourseCards ? (
+                  <CircularProgress />
+                ) : null}
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

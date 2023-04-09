@@ -31,6 +31,7 @@ function NextButton(props) {
             justifyContent: "center",
             color: "white",
           }}
+          disabled={props.isDisabled}
         >
           {!props.value ? "Next" : "Previous"}
         </Button>
