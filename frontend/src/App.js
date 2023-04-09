@@ -74,6 +74,14 @@ function App() {
             <img alt="logo" width="70px" height="70px" src={logo} />
           </div>
           <h1>RecommendMe</h1>
+          <p>
+            This project solves the issue of students at UMD who do not know
+            what classes to take. Searching on Testudo simply returns a query
+            based on some specified filters and may not be as helpful. In this
+            project, we attempt to mimic LLM and provide the user the ability to
+            provide custom inputs on the type of classes that they may be
+            interested in.
+          </p>
         </div>
       </div>
 
@@ -149,16 +157,20 @@ function App() {
                     alignItems="center"
                     marginTop="20px"
                   >
-                    <Button
-                      variant="contained"
-                      onClick={(event) => {
-                        handleSubmit(event);
-                      }}
-                      color="primary"
-                      disabled={courseSearch.length === 0 || loading}
-                    >
-                      Submit
-                    </Button>
+                    {!(classes.length === 0 && loadCourseCards && loading) ? (
+                      <Button
+                        variant="contained"
+                        onClick={(event) => {
+                          handleSubmit(event);
+                        }}
+                        color="primary"
+                        disabled={courseSearch.length === 0 && loading}
+                      >
+                        Submit
+                      </Button>
+                    ) : (
+                      <CircularProgress />
+                    )}
                   </Box>
                   {classes.length !== 0 && !loading ? (
                     <Box
@@ -179,11 +191,11 @@ function App() {
                     </Box>
                   ) : null}
                 </ThemeProvider>
-                {!loading && loadCourseCards ? (
-                  <ListCourses courses={classes} />
-                ) : loading && loadCourseCards ? (
+                {/* {!loading && loadCourseCards ? ( */}
+                <ListCourses courses={classes} />
+                {/* ) : loading && loadCourseCards ? (
                   <CircularProgress />
-                ) : null}
+                ) : null} */}
               </>
             ) : (
               ""

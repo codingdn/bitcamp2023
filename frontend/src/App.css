@@ -23,10 +23,15 @@ h3 {
 
 .flex-parent-element {
   display: flex;
-  width: 80%;
+  width: 90%;
 }
 
 .flex-child-element {
   flex: 1;
-  margin: 10px;
+  /* margin: 10px; */
+  padding-left: 10%;
+}
+
+.section-one-container {
+  margin-top: 20%;
 }
