@@ -48,10 +48,7 @@ function CourseCard(props) {
           display="flex"
           justifyContent="center"
           alignItems="center"
-          marginTop="20px"
-          position="absolute"
-          top="35%"
-          left="30%"
+          marginTop="30px"
         >
           <Card
             sx={{
@@ -63,25 +60,44 @@ function CourseCard(props) {
               {props.course.course_id} - {props.course.name}
             </h3>
             <p>
+              <b>Department</b>: <u>{props.course.department}</u>
+            </p>
+            <p>
+              <b>Credits</b>: <u>{props.course.credits}</u>
+            </p>
+            <p>
               {!_.isEmpty(props.course.description)
                 ? props.course.description
                 : "Whoop, looks like this class does not have a description 😔"}
             </p>
             <ul>
-              {!_.isEmpty(props.course.prereqs) ? (
-                <li>Prereqs: ${props.course.prereqs} </li>
+              {!_.isEmpty(props.course["relationships.prereqs"]) ? (
+                <li>
+                  <b>Prereqs</b>: {props.course["relationships.prereqs"]}{" "}
+                </li>
               ) : null}
-              {!_.isEmpty(props.course.restrictions) ? (
-                <li>Restrictions: ${props.course.restrictions} </li>
+              {!_.isEmpty(props.course["relationships.restrictions"]) ? (
+                <li>
+                  <b>Restrictions</b>:{" "}
+                  {props.course["relationships.restrictions"]}{" "}
+                </li>
               ) : null}
-              {!_.isEmpty(props.course.additional_info) ? (
-                <li>Additional Info: {props.course.additional_info}</li>
+              {!_.isEmpty(props.course["relationships.additional_info"]) ? (
+                <li>
+                  <b>Additional Info</b>:
+                  {props.course["relationships.additional_info"]}
+                </li>
               ) : null}
-              {!_.isEmpty(props.course.credit_granted_for) ? (
-                <li>Credit Granted For: {props.course.additional_info}</li>
+              {!_.isEmpty(props.course["relationships.credit_granted_for"]) ? (
+                <li>
+                  <b>Credit Granted For</b>:
+                  {props.course["relationships.credit_granted_for"]}
+                </li>
               ) : null}
               {props.course.gen_ed !== "[]" ? (
-                <li>Gened: {props.course.gen_ed}</li>
+                <li>
+                  <b>Gened</b>: {props.course.gen_ed}
+                </li>
               ) : null}
             </ul>
           </Card>
