@@ -34,7 +34,7 @@ origins = [
 #     }
 # ]
 
-searches = []
+# searches = []
 
 # searches = ["Recommend me a course that teaches me linear algebra"]
 

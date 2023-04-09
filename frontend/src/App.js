@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext} from "react";
+import React, { useState, useEffect} from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar";
 import NextButton from "./components/NextButton";
@@ -49,7 +49,7 @@ function App() {
   // const { sessionDetails, setSessionDetails } = useContext(SessionContext);
 
   const [classes, setClasses] = useState([]);
-  const [searches, setSearches] = useState([]);
+  // const [searches, setSearches] = useState([]);
 
   // const fetchClasses = async () => {
   //   const response = await fetch("http://localhost:8000/course/");
@@ -60,21 +60,20 @@ function App() {
   //   setClasses(classes.data);
   // };
 
-  const fetchSearches = async () => {
-    const response = await fetch("http://localhost:8000/search/");
-    const searches = await response.json();
-    console.log(searches);
+  // const fetchSearches = async () => {
+  //   const response = await fetch("http://localhost:8000/search/");
+  //   const searches = await response.json();
+  //   console.log(searches);
 
-    // setRecommendCourses(classes.data);
-    setSearches(searches);
-  };
+  //   // setRecommendCourses(classes.data);
+  //   setSearches(searches);
+  // };
 
   useEffect(() => {
-    // fetchClasses();
-    fetchSearches();
-  }, []);
+    console.log(classes)
+  }, [classes]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     setLoadCourseCards(!loadCourseCards);
 
     // const newSessionInfo = {
@@ -101,12 +100,17 @@ function App() {
     //   body: JSON.stringify(newSessionInfo),
     // }).then(fetchClasses);
 
-    fetch("http://localhost:8000/search/", {
+    const results = await fetch("http://localhost:8000/search/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSearch),
       // body: JSON.stringify(newSearch),
-    }).then(fetchSearches);
+    });
+
+    const resultsData = await results.json();
+
+    console.log(resultsData);
+    setClasses(resultsData);
   };
 
   return (
