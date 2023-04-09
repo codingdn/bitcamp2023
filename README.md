@@ -26,14 +26,19 @@ Here is the user flow:
 
 Demo: https://www.loom.com/share/5b50535990544b97a37a7f16f72178f1
 
+Devpost: https://devpost.com/software/recommendme
 
 ### How to run the app
 
 #### Frontend:
-````md
-```shell
+```terminal
 cd frontend
 npm install
 npm start
 ```
-````
+
+#### Backend:
+```terminal
+uvicorn backend.backend_api:app
+```
+
