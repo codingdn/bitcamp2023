@@ -30,7 +30,16 @@ trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_
 
 data['text_vec'] = text_vec_USE.tolist()
 
-def aggregate_similarity(request: str):
+def aggregate_similarity(search):
+    print("this is what im getting")
+    print(type(search))
+    print(dict(search)['query'])
+
+
+    # print(search[0])
+    # print(search["query"])
+
+    request = dict(search)['query']
     # Setting up lists for similarity scores for SentBERT and USE algorithms
     probs_USE = []    
 
@@ -82,4 +91,4 @@ def aggregate_similarity(request: str):
 
     return possible_class_USE.to_json(orient="records")
 
-aggregate_similarity("Recommend a course that teaches Artificial Intelligence")
+# aggregate_similarity("Recommend a course that teaches Artificial Intelligence")

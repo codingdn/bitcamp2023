@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 # Creating a request body for input response of a query
-class Query(BaseModel):
-    query: str
+# class Query(BaseModel):
+#     query: str
 
 app = FastAPI()
 
@@ -19,24 +19,24 @@ origins = [
     "localhost:3001"
 ]
 
-courses = [
-    {
-    "id": 1,
-    "course_id": "AASP104",
-    "name": "Introduction to African American Studies 4",
-    "dept_id": "AASP",
-    "description": "Significant aspects of the history of African Americans with particular emphasis on the evolution and development of black communities from slavery to the present. Interdisciplinary introduction to social, political, legal and economic roots of contemporary problems faced by blacks in the United States with applications to the lives of other racial and ethnic minorities in the Americas and in other societies.",
-    "gened": [["DSHS", "DVUP"]],
-    "restriction": "Permission of BSOS-African American Studies department.",
-    "additional_info": "Cross-listed with: WGSS265.",
-    "prereqs": "AASP101; and (ECON201 or ECON200).",
-    "credit_granted_for": "WMST265, AASP298B, WGSS265 or AASP265."
-    }
-]
+# courses = [
+#     {
+#     "id": 1,
+#     "course_id": "AASP104",
+#     "name": "Introduction to African American Studies 4",
+#     "dept_id": "AASP",
+#     "description": "Significant aspects of the history of African Americans with particular emphasis on the evolution and development of black communities from slavery to the present. Interdisciplinary introduction to social, political, legal and economic roots of contemporary problems faced by blacks in the United States with applications to the lives of other racial and ethnic minorities in the Americas and in other societies.",
+#     "gened": [["DSHS", "DVUP"]],
+#     "restriction": "Permission of BSOS-African American Studies department.",
+#     "additional_info": "Cross-listed with: WGSS265.",
+#     "prereqs": "AASP101; and (ECON201 or ECON200).",
+#     "credit_granted_for": "WMST265, AASP298B, WGSS265 or AASP265."
+#     }
+# ]
 
-searches = [
-    {"query": "Recommend me a course that teaches me linear algebra"}
-]
+searches = []
+
+# searches = ["Recommend me a course that teaches me linear algebra"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,37 +46,38 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/", tags=["root"])
-async def read_root() -> dict:
-    return {"message": "Welcome to your todo list."}
+# @app.get("/", tags=["root"])
+# async def read_root() -> dict:
+#     return {"message": "Welcome to your todo list."}
 
-@app.get("/course", tags=["courses"])
-async def get_courses() -> dict:
-    return { "data": courses }
+# @app.get("/course", tags=["courses"])
+# async def get_courses() -> dict:
+#     return { "data": courses }
 
-@app.post("/course", tags=["courses"])
-async def add_course(course:dict) -> dict:
-    courses.append(course)
-    return { "data": {"request added"} }
+# @app.post("/course", tags=["courses"])
+# async def add_course(course:dict) -> dict:
+#     courses.append(course)
+#     return { "data": {"request added"} }
 
-@app.get("/search", tags=["searches"])
-async def get_searches() -> dict:
-    return { "data": searches }
+# @app.get("/search", tags=["searches"])
+# async def get_searches():
+#     return { "data": searches }
 
-@app.post("/search", tags=["searches"])
-async def add_search(search:dict) -> dict:
-    searches.append(search)
-    print("search was successful")
-    print(search)
-    # print(json.loads(aggregate_similarity(search)))
-    return json.loads(aggregate_similarity(search))
-
-
+@app.post("/search/")
+async def add_search(search: dict):
+    # searches.append(search)
+    # print("search was successful")
+    # print(type(search))
+    # print(search[search.keys()[0]])
+    result = json.loads(aggregate_similarity(search))
+    print(result[0])
+    print("this will print if it generated something")
+    return result
 
 # Creating a POST request
-@app.post("/request/")
-async def create_query(class_request: Query):
-    return json.loads(aggregate_similarity(class_request.query))
+# @app.post("/request/")
+# async def create_query(class_request: Query):
+#     return json.loads(aggregate_similarity(class_request.query))
 
 
 # if __name__ == "__main__":
