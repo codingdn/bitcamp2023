@@ -1,0 +1,16 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "q": "courses that teach me machine learning"
+    },
+    {
+      "id": 2,
+      "q": "courses that are 1 credit and in MATH"
+    },
+    {
+      "id": 2,
+      "q": "courses that are DVUP in BMGT"
+    }
+  ]
+}
