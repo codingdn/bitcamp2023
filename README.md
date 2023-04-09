@@ -24,4 +24,4 @@ Here is the user flow:
 * Frontend - React
 * Backend - Fast API
 
-Demo: https://www.loom.com/share/749cd8cf74e6438b82ce9992262dc04c
+Demo: https://www.loom.com/share/5b50535990544b97a37a7f16f72178f1
