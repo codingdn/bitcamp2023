@@ -81,4 +81,5 @@ def aggregate_similarity(request: str):
     possible_class_USE = sorted_USE[['course_id', 'name', 'dept_id', 'description', 'gen_ed', 'relationships.restrictions', 'relationships.additional_info', 'relationships.prereqs', 'relationships.credit_granted_for', 'Probabilities_USE']]
 
     return possible_class_USE.to_json(orient="records")
-# aggregate_similarity("Recommend a course that teaches Artificial Intelligence")
+
+aggregate_similarity("Recommend a course that teaches Artificial Intelligence")

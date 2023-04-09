@@ -1,14 +1,14 @@
 from fastapi import FastAPI
-# import uvicorn
-# from backend.similarity import aggregate_similarity
-# from pydantic import BaseModel
-# import json
+import uvicorn
+from backend.similarity_obscure import aggregate_similarity
+from pydantic import BaseModel
+import json
 from fastapi.middleware.cors import CORSMiddleware
 
 
 # Creating a request body for input response of a query
-# class Query(BaseModel):
-#     query: str
+class Query(BaseModel):
+    query: str
 
 app = FastAPI()
 
@@ -34,7 +34,9 @@ courses = [
     }
 ]
 
-searchrequests = []
+searches = [
+    {"query": "Recommend me a course that teaches me linear algebra"}
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,12 +59,24 @@ async def add_course(course:dict) -> dict:
     courses.append(course)
     return { "data": {"request added"} }
 
+@app.get("/search", tags=["searches"])
+async def get_searches() -> dict:
+    return { "data": searches }
+
+@app.post("/search", tags=["searches"])
+async def add_search(search:dict) -> dict:
+    searches.append(search)
+    print("search was successful")
+    print(search)
+    # print(json.loads(aggregate_similarity(search)))
+    return json.loads(aggregate_similarity(search))
+
 
 
 # Creating a POST request
-# @app.post("/request/")
-# async def create_query(class_request: Query):
-#     return json.loads(aggregate_similarity(class_request.query))
+@app.post("/request/")
+async def create_query(class_request: Query):
+    return json.loads(aggregate_similarity(class_request.query))
 
 
 # if __name__ == "__main__":

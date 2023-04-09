@@ -29,6 +29,10 @@ const theme = createTheme({
 // };
 const ClassesContext = createContext({
   classes: [], fetchClasses: () => {}
+}
+)
+const SearchContext = createContext({
+  searches: [], fetchSearches: () => {}
 })
 
 //Entry point for application
@@ -45,6 +49,7 @@ function App() {
   // const { sessionDetails, setSessionDetails } = useContext(SessionContext);
 
   const [classes, setClasses] = useState([]);
+  const [searches, setSearches] = useState([]);
 
   const fetchClasses = async () => {
     const response = await fetch("http://localhost:8000/course/");
@@ -55,8 +60,18 @@ function App() {
     setClasses(classes.data);
   };
 
+  const fetchSearches = async () => {
+    const response = await fetch("http://localhost:8000/search/");
+    const searches = await response.json();
+    console.log(searches);
+
+    // setRecommendCourses(classes.data);
+    setSearches(searches.data);
+  };
+
   useEffect(() => {
     fetchClasses();
+    fetchSearches();
   }, []);
 
   const handleSubmit = (event) => {
@@ -76,13 +91,21 @@ function App() {
       credit_granted_for: "WMST265, AASP298B, WGSS265 or AASP265.",
     };
 
-    console.log(newSessionInfo);
+    const newSearch = {
+      "query": courseSearch
+    }
 
     fetch("http://localhost:8000/course/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSessionInfo),
     }).then(fetchClasses);
+
+    fetch("http://localhost:8000/search/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newSearch),
+    }).then(fetchSearches);
   };
 
   return (
@@ -193,6 +216,13 @@ function App() {
 
               {/**Spinner to wait for results*/}
               <ListCourses courses={classes} />
+
+              <h2>Recent Searches:</h2>
+              <ul>
+                {searches.map((search, index) => (
+                  <li>{search.query}</li>
+                ))}
+              </ul>
 
               {/* {loadCourseCards && recommendedCourses.length > 0 ? (
                 <ListCourses courses={recommendedCourses} />
