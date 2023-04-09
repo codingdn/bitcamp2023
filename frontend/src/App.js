@@ -38,7 +38,9 @@ function App() {
     setLoadCourseCards(!loadCourseCards);
 
     const newSearch = {
-      "query": courseSearch
+      "query": courseSearch,
+      "majors": majors,
+      "takenCourses": takenCourses
     }
 
     const results = await fetch("http://localhost:8000/search/", {

@@ -65,13 +65,7 @@ app.add_middleware(
 
 @app.post("/search/")
 async def add_search(search: dict):
-    # searches.append(search)
-    # print("search was successful")
-    # print(type(search))
-    # print(search[search.keys()[0]])
     result = json.loads(aggregate_similarity(search))
-    print(result[0])
-    print("this will print if it generated something")
     return result
 
 # Creating a POST request

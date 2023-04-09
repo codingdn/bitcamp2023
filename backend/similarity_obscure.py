@@ -31,15 +31,13 @@ trained_model = tf.keras.models.load_model('backend/resources/intent_classifier_
 data['text_vec'] = text_vec_USE.tolist()
 
 def aggregate_similarity(search):
-    print("this is what im getting")
-    print(type(search))
-    print(dict(search)['query'])
+    dict_conversion = dict(search)
+    
+    #Getting serach params
+    request = dict_conversion['query']
+    majors = dict_conversion['majors']
+    taken_courses = dict_conversion['takenCourses']
 
-
-    # print(search[0])
-    # print(search["query"])
-
-    request = dict(search)['query']
     # Setting up lists for similarity scores for SentBERT and USE algorithms
     probs_USE = []    
 
@@ -58,8 +56,10 @@ def aggregate_similarity(search):
         if limit >= 0.5:
             break
     
+    for major in majors:
+        chosen_departments.append(dict(major)['dept_id'])
 
-    narrowed_questions = data[data["dept_id"].isin(chosen_departments)]
+    narrowed_questions = data[data["dept_id"].isin(set(chosen_departments))]
 
     # Vectorizing query using respective models
     request_vec_USE = np.array(model([request]))[0]
@@ -77,6 +77,9 @@ def aggregate_similarity(search):
 
     # Sorting dataframe in ascending order by the resepective similarity scores
     sorted_USE = narrowed_questions.sort_values(by = ['Probabilities_USE'], ascending = False)
+
+    for course in taken_courses:
+        sorted_USE = sorted_USE.loc[sorted_USE["course_id"] != dict(course)['course_id']]
 
     # # Extracting the predicted question and answer based on highest similarity score
     # possible_class_USE = sorted_USE[['course_id', 'name', 'dept_id', 'description', 'gen_ed', 'relationships.restrictions', 'relationships.additional_info', 'relationships.prereqs', 'relationships.credit_granted_for', 'Probabilities_USE']]
