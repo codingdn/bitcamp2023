@@ -78,17 +78,9 @@ def aggregate_similarity(search):
     # Sorting dataframe in ascending order by the resepective similarity scores
     sorted_USE = narrowed_questions.sort_values(by = ['Probabilities_USE'], ascending = False)
 
-    # Extracting the predicted question and answer based on highest similarity score
+    # # Extracting the predicted question and answer based on highest similarity score
+    # possible_class_USE = sorted_USE[['course_id', 'name', 'dept_id', 'description', 'gen_ed', 'relationships.restrictions', 'relationships.additional_info', 'relationships.prereqs', 'relationships.credit_granted_for', 'Probabilities_USE']]
 
-    # output = "{ data: ["
-    # for i in range(len(sorted_USE)):
-    #     possible_class_USE = sorted_USE.iloc[i]
-    #     output += "{ \"id\": " + str(i) + ": " + str({'Course ID': possible_class_USE.course_id, "Probability": possible_class_USE.Probabilities_USE}) + ", "
-
-    # output += "}"
-
-    possible_class_USE = sorted_USE[['course_id', 'name', 'dept_id', 'description', 'gen_ed', 'relationships.restrictions', 'relationships.additional_info', 'relationships.prereqs', 'relationships.credit_granted_for', 'Probabilities_USE']]
-
-    return possible_class_USE.to_json(orient="records")
+    return sorted_USE.to_json(orient="records")
 
 # aggregate_similarity("Recommend a course that teaches Artificial Intelligence")
