@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import sample from "./data/sample_class.json";
 import ListCourses from "./components/ListCourses";
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
+import { radioClasses, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import logo from "./assets/logo.svg";
 import Button from "@mui/material/Button";
@@ -27,6 +27,9 @@ const theme = createTheme({
 // const updateSessionInfo = async () => {
 //   await fetch(http);
 // };
+const ClassesContext = createContext({
+  classes: [], fetchClasses: () => {}
+})
 
 //Entry point for application
 function App() {
@@ -41,165 +44,177 @@ function App() {
 
   // const { sessionDetails, setSessionDetails } = useContext(SessionContext);
 
-  const fetchRecommendedCourses = async () => {
-    const response = await fetch("http://localhost:8000/request/");
-    const result = await response.json();
-    console.log(result);
+  const [classes, setClasses] = useState([]);
 
-    setRecommendCourses(result.recommendedCourses);
+  const fetchClasses = async () => {
+    const response = await fetch("http://localhost:8000/course/");
+    const classes = await response.json();
+    console.log(classes);
+
+    // setRecommendCourses(classes.data);
+    setClasses(classes.data);
   };
 
   useEffect(() => {
-    fetchRecommendedCourses();
+    fetchClasses();
   }, []);
 
   const handleSubmit = (event) => {
     setLoadCourseCards(!loadCourseCards);
 
     const newSessionInfo = {
-      courseSearch: courseSearch,
-      takenCourses: takenCourses,
-      majors: majors,
-      recommendedCourses: recommendedCourses,
+      id: 1,
+      course_id: "AASP107",
+      name: "Introduction to African American Studies",
+      dept_id: "AASP",
+      description:
+        "Significant aspects of the history of African Americans with particular emphasis on the evolution and development of black communities from slavery to the present. Interdisciplinary introduction to social, political, legal and economic roots of contemporary problems faced by blacks in the United States with applications to the lives of other racial and ethnic minorities in the Americas and in other societies.",
+      gened: [["DSHS", "DVUP"]],
+      restriction: "Permission of BSOS-African American Studies department.",
+      additional_info: "Cross-listed with: WGSS265.",
+      prereqs: "AASP101; and (ECON201 or ECON200).",
+      credit_granted_for: "WMST265, AASP298B, WGSS265 or AASP265.",
     };
 
     console.log(newSessionInfo);
 
-    fetch("http://localhost:8000/request/", {
+    fetch("http://localhost:8000/course/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSessionInfo),
-    }).then(fetchRecommendedCourses);
+    }).then(fetchClasses);
   };
 
   return (
     // <SessionContext.Provider
     //   value={{ recommendedCourses, fetchRecommendedCourses }}
     // >
-    <div className="App">
-      <div className="logo">
-        <img alt="logo" width="70px" height="70px" src={logo} />
-      </div>
-      <h1>RecommendMe</h1>
+    <ClassesContext.Provider value={{ classes, fetchClasses }}>
+      <div className="App">
+        <div className="logo">
+          <img alt="logo" width="70px" height="70px" src={logo} />
+        </div>
+        <h1>RecommendMe</h1>
 
-      {/**Input Major */}
-      <h2 className="section-header">Insert Major(s) (Department Code) </h2>
-      <div className="search-section">
-        <SearchBar
-          searchType="major"
-          values={majors}
-          setValue={setMajors}
-          isDisabled={toCourses}
-        />
-      </div>
-      <NextButton value={toCourses} setValue={setToCourses} />
-      <div>
-        {toCourses ? (
-          <>
-            {/**Input Courses Taken */}
-            <h2 className="section-header">Select Taken Courses</h2>
-            <div className="search-section">
-              <SearchBar
-                searchType="takenCourses"
-                values={takenCourses}
-                setValue={setTakenCourses}
-                isDisabled={toFindCourses}
-              />
-            </div>
-            <NextButton value={toFindCourses} setValue={SetToFindCourses} />
-          </>
-        ) : (
-          ""
-        )}
-      </div>
-      <div>
-        {toFindCourses ? (
-          <>
-            {/**Input Search */}
-            <h2 className="section-header">Find Courses</h2>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              marginTop="20px"
-            >
-              <TextField
-                id="course-search"
-                label="Search Courses"
-                variant="outlined"
-                placeholder="e.g. Recommend me a course that teaches artificial intelligence"
-                multiline
-                onChange={(event) => {
-                  setCourseSearch(event.target.value);
-                }}
-                sx={{
-                  width: 450,
-                }}
-              />
-            </Box>
-
-            {/**Error code if no courses found */}
-            {loadCourseCards && recommendedCourses.length === 0 ? (
+        <h2 className="section-header">Insert Major(s) (Department Code) </h2>
+        <div className="search-section">
+          <SearchBar
+            searchType="major"
+            values={majors}
+            setValue={setMajors}
+            isDisabled={toCourses}
+          />
+        </div>
+        <NextButton value={toCourses} setValue={setToCourses} />
+        <div>
+          {toCourses ? (
+            <>
+              {/**Input Courses Taken */}
+              <h2 className="section-header">Select Taken Courses</h2>
+              <div className="search-section">
+                <SearchBar
+                  searchType="takenCourses"
+                  values={takenCourses}
+                  setValue={setTakenCourses}
+                  isDisabled={toFindCourses}
+                />
+              </div>
+              <NextButton value={toFindCourses} setValue={SetToFindCourses} />
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+        <div>
+          {toFindCourses ? (
+            <>
+              {/**Input Search */}
+              <h2 className="section-header">Find Courses</h2>
               <Box
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
                 marginTop="20px"
               >
-                <Typography sx={{ color: "red" }}>
-                  Whoops, something went wrong! Try another search term
-                </Typography>
+                <TextField
+                  id="course-search"
+                  label="Search Courses"
+                  variant="outlined"
+                  placeholder="e.g. Recommend me a course that teaches artificial intelligence"
+                  multiline
+                  onChange={(event) => {
+                    setCourseSearch(event.target.value);
+                  }}
+                  sx={{
+                    width: 450,
+                  }}
+                />
               </Box>
-            ) : (
-              ""
-            )}
 
-            {/* <SubmitButton
+              {/**Error code if no courses found */}
+              {/* {loadCourseCards && recommendedCourses.length === 0 ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  marginTop="20px"
+                >
+                  <Typography sx={{ color: "red" }}>
+                    Whoops, something went wrong! Try another search term
+                  </Typography>
+                </Box>
+              ) : (
+                ""
+              )} */}
+
+              {/* <SubmitButton
               setValue={setLoadCourseCards}
               // onClick={handleSubmit}
             /> */}
-            <ThemeProvider theme={theme}>
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                marginTop="20px"
-              >
-                <Button
-                  variant="contained"
-                  onClick={(event) => {
-                    // setLoadCourseCards(!loadCourseCards);
-                    handleSubmit(event);
-                  }}
-                  color="primary"
+              <ThemeProvider theme={theme}>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  marginTop="20px"
                 >
-                  Submit
-                </Button>
-              </Box>
-            </ThemeProvider>
+                  <Button
+                    variant="contained"
+                    onClick={(event) => {
+                      // setLoadCourseCards(!loadCourseCards);
+                      handleSubmit(event);
+                    }}
+                    color="primary"
+                  >
+                    Submit
+                  </Button>
+                </Box>
+              </ThemeProvider>
 
-            {/**Spinner to wait for results*/}
-            {loadCourseCards && recommendedCourses.length > 0 ? (
-              <ListCourses courses={recommendedCourses} />
-            ) : loadCourseCards && recommendedCourses.length === 0 ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                margin="30px"
-              >
-                <CircularProgress />
-              </Box>
-            ) : (
-              ""
-            )}
-          </>
-        ) : (
-          ""
-        )}
+              {/**Spinner to wait for results*/}
+              <ListCourses courses={classes} />
+
+              {/* {loadCourseCards && recommendedCourses.length > 0 ? (
+                <ListCourses courses={recommendedCourses} />
+              ) : loadCourseCards && recommendedCourses.length === 0 ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  margin="30px"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                ""
+              )} */}
+            </>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
-    </div>
-    // </SessionContext.Provider>
+    </ClassesContext.Provider>
   );
 }
 
