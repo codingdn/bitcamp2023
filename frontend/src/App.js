@@ -54,6 +54,7 @@ function App() {
     });
 
     const resultsData = await results.json();
+    console.log(resultsData.slice(0, 6));
     setClasses(resultsData.slice(0, 6));
 
     setTimeout(() => {

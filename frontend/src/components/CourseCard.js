@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import Card from '@mui/material/Card';
-import Box from "@mui/material/Box"
-import Modal from '@mui/material/Modal';
-import CardActions from '@mui/material/CardActions';
-
+import React, { useState } from "react";
+import Card from "@mui/material/Card";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import CardActions from "@mui/material/CardActions";
+import { CardContent } from "@mui/material";
+import _ from "lodash";
 
 function CourseCard(props) {
   const [open, setOpen] = useState(false);
@@ -19,13 +20,17 @@ function CourseCard(props) {
     >
       <Card
         sx={{
-          height: "100px",
+          height: "170px",
+          width: "300px",
         }}
       >
         <CardActions onClick={handleOpen}>
-          <h3>
-            {props.course.course_id} <br /> {props.course.name}
-          </h3>
+          <CardContent sx={{ textAlign: "center" }}>
+            <div>
+              <h3>{props.course.course_id}</h3>
+              <p>{props.course.name}</p>
+            </div>
+          </CardContent>
         </CardActions>
 
         {/**Popup when card is clicked to see more information  */}
@@ -50,18 +55,30 @@ function CourseCard(props) {
                 padding: "20px",
               }}
             >
-              <h3>{props.course.course_id} - {props.course.name}</h3>
-              <p>{props.course.description}</p>
+              <h3>
+                {props.course.course_id} - {props.course.name}
+              </h3>
+              <p>
+                {!_.isEmpty(props.course.description)
+                  ? props.course.description
+                  : "Whoop, looks like this class does not have a description 😔"}
+              </p>
               <ul>
-                <li>Prereqs: {props.course.prereqs}</li>
-                {!props.course.restrictions === "" ? (
-                  <li>Restrictions: {props.course.restrictions}</li>
+                {!_.isEmpty(props.course.prereqs) ? (
+                  <li>Prereqs: ${props.course.prereqs} </li>
                 ) : null}
-                <li>Additional Info: {props.course.additional_info}</li>
-                <li>Credit Granted For: {props.course.credit_granted_for}</li>
-                {/* {props.course.gened.length > 0 ? (
-                  <li>Gened: {props.course.gened.toString()}</li>
-                ) : null} */}
+                {!_.isEmpty(props.course.restrictions) ? (
+                  <li>Restrictions: ${props.course.restrictions} </li>
+                ) : null}
+                {!_.isEmpty(props.course.additional_info) ? (
+                  <li>Additional Info: {props.course.additional_info}</li>
+                ) : null}
+                {!_.isEmpty(props.course.credit_granted_for) ? (
+                  <li>Credit Granted For: {props.course.additional_info}</li>
+                ) : null}
+                {props.course.gen_ed !== "[]" ? (
+                  <li>Gened: {props.course.gen_ed}</li>
+                ) : null}
               </ul>
             </Card>
           </Box>
@@ -71,4 +88,4 @@ function CourseCard(props) {
   );
 }
 
-export default CourseCard
+export default CourseCard;
